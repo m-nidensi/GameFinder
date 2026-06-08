@@ -1,0 +1,13 @@
+
+/* colors that will be used */
+:root {
+    --background-color: #1e1b4b;
+    --text-color: #E05454;
+    --accent-color: #8b5cf6;
+}
+
+/* colors for body: background, text color */
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
