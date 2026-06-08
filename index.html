@@ -9,17 +9,57 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- navigation bar -->
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="saved.html">Favorites</a>
-        <a href="recommendations.html">Recommendations</a>
-    </nav>
 
-    <!-- page tital: -->
-    <h1>Game Finder</h1>
+    <header>
+        <!-- navigation bar -->
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="saved.html">Favorites</a>
+            <a href="recommendations.html">Recommendations</a>
+        </nav>
+    </header>
 
-    <!-- conecting to js -->
-    <script src="main.js" defer></script>
+    <main>
+        <!-- page tital: -->
+        <h1>Game Finder</h1>
+
+        <section>
+            <p> Search for games and discover new favorites.</p>
+
+            <!-- from for search input with submit button named search.and a filter that has 
+             ganra options. -->
+            <form id="search-form">
+                <input
+                    type="text"
+                    id="search-input"
+                    placeholder="Search for a game..."
+                    required
+                >
+                <select id="genre-filter">
+                    <option value="all">All Genres</option>
+                    <option value="action">Action</option>
+                    <option value="rpg">RPG</option>
+                    <option value="strategy">Strategy</option>
+                    <option value="adventure">Adventure</option>
+                </select>
+
+                <button type="submit">Search</button>
+            </form>
+        </section>
+
+        <!-- result section/ should contain search results layter on -->
+        <section>
+            <h2>Results</h2>
+            <div id="games-container"></div>
+        </section>
+
+        <!-- conecting to js -->
+        <script type="module" src="main.js" defer></script>
+    </main>
+
+    <footer>
+        <p>Game Finder Project</p>
+    </footer>
+
 </body>
 </html>
