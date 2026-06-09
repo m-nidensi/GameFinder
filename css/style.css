@@ -3,11 +3,79 @@
 :root {
     --background-color: #1e1b4b;
     --text-color: #E05454;
-    --accent-color: #8b5cf6;
+    --accent-color: #C13383;
 }
 
 /* colors for body: background, text color */
 body {
     background-color: var(--background-color);
     color: var(--text-color);
+    /* space */
+    padding: 20px;
+
+    /* making site minemum 100 Viewport Height */
+    min-height: 100vh;
+
+    /* makes header, main ,footer araiged vertically*/
+    display: flex;
+    flex-direction: column;
 }
+
+/* styling navigation bar. using flex, distance between links */
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+}
+nav a {
+    color: var(--accent-color);
+    /* removes underlines from links */
+    text-decoration: none;
+}
+nav a:hover {
+    color: #00f5ff;
+}
+
+
+/* all headers should be in center*/
+h1 {
+    text-align: center;
+}
+
+/* gives header a background */
+header {
+    background-color: #04030c;
+    padding: 20px;
+    margin: -20px -20px 40px -20px;
+}
+
+/* making shure that mains content stays in readable place */
+main {
+    max-width: 800px;
+    /* main is automatically centered with having same distance from both sides */
+    margin: 0 auto;
+
+    /* stretch and take up any available extra space inside its parent container */
+    flex-grow: 1;
+}
+
+/* add some distance between form elements and center them */
+#search-form {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.form-section {
+    text-align: center;
+}
+.result-section {
+    text-align: center;
+}
+
+/* positioning footer in center */
+footer {
+    text-align: center;
+    margin-top: 50px;
+}
+
