@@ -9,6 +9,7 @@
     --background-color: #1e1b4b;
     --text-color: #E05454;
     --accent-color: #C13383;
+    --darkPurple: #04030c;
 }
 
 /* colors for body: background, text color */
@@ -36,6 +37,7 @@ nav a {
     color: var(--accent-color);
     /* removes underlines from links */
     text-decoration: none;
+    font-size: 1.1rem;
 }
 nav a:hover {
     color: #00f5ff;
@@ -49,7 +51,7 @@ h1 {
 
 /* gives header a background */
 header {
-    background-color: #04030c;
+    background-color: var(--darkPurple);
     padding: 20px;
     margin: -20px -20px 40px -20px;
 }
@@ -70,7 +72,6 @@ main {
     justify-content: center;
     gap: 20px;
 }
-
 .form-section {
     text-align: center;
 }
@@ -84,6 +85,7 @@ footer {
     margin-top: 50px;
 }
 
+
 #games-container {
     /* turn container into grid layout */
     display: grid;
@@ -92,9 +94,8 @@ footer {
     gap: 25px;
     margin-top: 30px;
 }
-
 .game-card {
-    background-color: #04030c;
+    background-color: var(--darkPurple);
     border: 5px solid var(--accent-color);
     /* Rounds corners */
     border-radius: 15px;
@@ -115,7 +116,7 @@ footer {
 }
 /* when hovering over card it moves up 5px, grows a bit and has a shadow */
 .game-card:hover {
-    transform: translateY(-5px) scale(1.1);
+    transform: translateY(-5px) scale(1.03);
     box-shadow: 0 0 20px var(--accent-color);
 }
 
