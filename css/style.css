@@ -1,4 +1,9 @@
-
+/*  forces an element's total width and height to include its padding and borders.
+ This prevents padding or borders from increasing the element's actual visual size
+  on your webpage, making layout calculations predictable and simple. */
+* {
+    box-sizing: border-box;
+}
 /* colors that will be used */
 :root {
     --background-color: #1e1b4b;
@@ -51,10 +56,10 @@ header {
 
 /* making shure that mains content stays in readable place */
 main {
-    max-width: 800px;
+    /*  Sets element width to 95% of its parent container. */
+    width: 95%;
     /* main is automatically centered with having same distance from both sides */
     margin: 0 auto;
-
     /* stretch and take up any available extra space inside its parent container */
     flex-grow: 1;
 }
@@ -79,3 +84,66 @@ footer {
     margin-top: 50px;
 }
 
+#games-container {
+    /* turn container into grid layout */
+    display: grid;
+    /* minmax: Cards should never be smaller than 320px But may grow if there is more space */
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.game-card {
+    background-color: #04030c;
+    border: 5px solid var(--accent-color);
+    /* Rounds corners */
+    border-radius: 15px;
+    /*images stay inside the card./they dont overflow */
+    overflow: hidden;
+    padding-bottom: 15px;
+}
+.game-card img {
+    width: 100%;
+    height: 180px;
+    /* the image fills the area nicely */
+    object-fit: cover;
+}
+/* center all card texts*/
+.game-card h3,
+.game-card p {
+    text-align: center;
+}
+/* when hovering over card it moves up 5px, grows a bit and has a shadow */
+.game-card:hover {
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 0 20px var(--accent-color);
+}
+
+
+
+
+
+/* Mobile phones */
+@media (max-width: 600px) {
+    nav {
+        flex-direction: column;
+        gap: 15px;
+    }
+    #search-form {
+        flex-direction: column;
+        align-items: center;
+    }
+    .game-card img {
+        height: 150px;
+    }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+    main {
+        max-width: 1400px;
+    }
+    #games-container {
+        grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));
+    }
+}
