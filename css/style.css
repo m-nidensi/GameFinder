@@ -89,8 +89,9 @@ footer {
 #games-container, #favorite-games-container {
     /* turn container into grid layout */
     display: grid;
-    /* minmax: Cards should never be smaller than 320px But may grow if there is more space */
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    /* minmax: Cards should never be smaller than 320px and bigger then 400px */
+    grid-template-columns: repeat(auto-fit, minmax(320px, 400px));
+    justify-content: center;
     gap: 25px;
     margin-top: 30px;
 }
@@ -102,6 +103,9 @@ footer {
     /*images stay inside the card./they dont overflow */
     overflow: hidden;
     padding-bottom: 15px;
+    /* makes buttons and text align more consistently inside cards. */
+    display: flex;
+    flex-direction: column;
 }
 .game-card img {
     width: 100%;
@@ -121,6 +125,11 @@ footer {
 }
 
 
+#loading-message, #error-message {
+    font-size: 1.5rem;
+    color: #00f5ff;
+    font-weight: bold;
+}
 
 
 

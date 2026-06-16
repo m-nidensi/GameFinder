@@ -15,21 +15,46 @@ if (form) {
         const searchInput = document.getElementById("search-input");
         const genreFilter = document.getElementById("genre-filter");
 
-        const games = await searchGames(searchInput.value);
-        // stores selected genre from dropdown
-        const selectedGenre = genreFilter.value;
-        let filteredGames = games;
+        // if there is an error, we should be able to see it on page
+        const errorMessage = document.getElementById("error-message");
+        errorMessage.textContent = "";
 
-        if (selectedGenre !== "all") {
-            filteredGames = games.filter((game) =>
-                game.genres.some(
-                    (genre) =>
-                        genre.name.toLowerCase() === selectedGenre.toLowerCase()
-                )
-            );
+        // while searching for games website will show "Loading games..."
+        const loadingMessage = document.getElementById("loading-message");
+        loadingMessage.textContent = "Loading games...";
+        // this line is added so loading message will be visible for longer
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        try{
+
+            const games = await searchGames(searchInput.value);
+            // stores selected genre from dropdown
+            const selectedGenre = genreFilter.value;
+            let filteredGames = games;
+
+            if (selectedGenre !== "all") {
+                filteredGames = games.filter((game) =>
+                    game.genres.some(
+                        (genre) =>
+                            genre.name.toLowerCase() === selectedGenre.toLowerCase()
+                    )
+                );
+            }
+            // if there are no games found show this message and clear the past search
+            if (filteredGames.length === 0) {
+                document.getElementById("games-container").innerHTML = "";
+                errorMessage.textContent = "No games found!";
+                loadingMessage.textContent = "";
+                return;
+            }
+
+            renderGames(filteredGames);
+            loadingMessage.textContent = "";
+            errorMessage.textContent = "";
+        }catch (error) {
+            loadingMessage.textContent = "";
+            errorMessage.textContent = "Failed to load games :( ... Please try again!";
         }
-
-        renderGames(filteredGames);
     });
 }
 // creates a gamecard
@@ -71,7 +96,7 @@ function renderGames(games) {
         const card = createGameCard(game);
 
         const favoriteButton = document.createElement("button");
-        favoriteButton.textContent = "Add to favorites"
+        favoriteButton.textContent = "Add to favorites";
         favoriteButton.addEventListener("click", () => {
             saveFavorite(game);
         });
@@ -86,6 +111,17 @@ function renderGames(games) {
 function saveFavorite(game) {
     // get existing favorites from localStorage
     let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+
+    // check if game already exists in favorites
+    //  (some = Checks whether at least one item matches the condition.)
+    const alreadySaved = favorites.some(
+        (favorite) => favorite.id === game.id
+    );
+    if (alreadySaved) {
+        alert(`${game.name} is already in favorites!`);
+        return;
+    }
+
     // add in the game
     favorites.push(game);
     // adds favorites to local storage with jsons help
@@ -102,7 +138,7 @@ const savedContainer = document.getElementById("favorite-games-container");
 if (savedContainer) {
     displayFavorites();
 }
-// desplays all the favorit cards
+// desplays all the favorit cards and adds remove button to them
 function displayFavorites() {
     const container = document.getElementById("favorite-games-container");
     const favorites =JSON.parse(localStorage.getItem("favorites")) || [];
@@ -110,6 +146,29 @@ function displayFavorites() {
 
     favorites.forEach((game) => {
         const card = createGameCard(game);
+
+        const removeButton = document.createElement("button");
+        removeButton.textContent = "Remove";
+        removeButton.addEventListener("click", () => {
+            removeFavorite(game.id);
+        });
+
+        card.appendChild(removeButton);
         container.appendChild(card);
     });
+}
+
+// gets favorites from local storage and fiters them so they dont contain removed card.
+// after that desplaying function is called again.
+function removeFavorite(gameId) {
+    let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    favorites = favorites.filter(
+        (game) => game.id !== gameId
+    );
+
+    localStorage.setItem(
+        "favorites",
+        JSON.stringify(favorites)
+    );
+    displayFavorites();
 }
