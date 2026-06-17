@@ -1,8 +1,19 @@
 // get search functions from api
 import { searchGames, searchGamesByGenre } from "./api.js";
+// let curent page be 1 for starter.
+let currentPage = 1;
+// We'll need this because when the user presses Next, we need to know what they searched for.
+let currentSearch = "";
+// same with genre
+let currentGenre = "all";
+// get info from buttons
+const nextButton = document.getElementById("next-btn");
+const previousButton = document.getElementById("previous-btn");
+const pageNumber = document.getElementById("page-number");
 
 // gets information from the form on home page.
 const form = document.getElementById("search-form");
+
 
 // addEventListener listens to action happaning in from, in this situation a submit button.
 // preventDefault Stops a <form> from reloading the page when clicking a submit button, allowing asynchronous JavaScript
@@ -25,20 +36,16 @@ if (form) {
         
 
         try{
-
-            const games = await searchGames(searchInput.value);
+            currentSearch = searchInput.value;
+            currentPage = 1;
+            currentGenre = genreFilter.value;
+            const games = await searchGames(
+                searchInput.value,
+                currentPage
+            );
             // stores selected genre from dropdown
             const selectedGenre = genreFilter.value;
-            let filteredGames = games;
-
-            if (selectedGenre !== "all") {
-                filteredGames = games.filter((game) =>
-                    game.genres.some(
-                        (genre) =>
-                            genre.name.toLowerCase() === selectedGenre.toLowerCase()
-                    )
-                );
-            }
+            const filteredGames = filterByGenre(games, currentGenre);
             // if there are no games found show this message and clear the past search
             if (filteredGames.length === 0) {
                 document.getElementById("games-container").innerHTML = "";
@@ -56,6 +63,33 @@ if (form) {
         }
     });
 }
+
+// if next/prev button is pressed
+if (nextButton) {
+    nextButton.addEventListener("click", async () => {
+        if (!currentSearch) return;
+        currentPage++;
+        const games = await searchGames(currentSearch, currentPage);
+        const filteredGames = filterByGenre(games, currentGenre);
+        renderGames(filteredGames);
+        pageNumber.textContent =`Page ${currentPage}`;
+    });
+}
+if (previousButton) {
+    previousButton.addEventListener("click", async () => {
+        if (!currentSearch) return;
+        if (currentPage === 1) return;
+        currentPage--;
+        const games = await searchGames(currentSearch, currentPage);
+        const filteredGames = filterByGenre(games, currentGenre);
+        renderGames(filteredGames);
+        pageNumber.textContent =`Page ${currentPage}`;
+    });
+}
+
+
+
+
 // creates a gamecard
 function createGameCard(game) {
     const card = document.createElement("div");
@@ -82,6 +116,19 @@ function createGameCard(game) {
     card.appendChild(rating);
     card.appendChild(genres);
     return card;
+}
+
+// filrers games by genre
+function filterByGenre(games, genre) {
+    if (genre === "all") {
+        return games;
+    }
+    return games.filter((game) =>
+        game.genres.some(
+            (gameGenre) =>
+                gameGenre.name.toLowerCase() === genre.toLowerCase()
+        )
+    );
 }
 
 // functon to desplay the games cards
@@ -218,14 +265,13 @@ function displayRecommendations() {
         });
     });
 
-    container.innerHTML = "<h2>Your favorite genres:</h2>";
-
     // converts object into array, then we sort it from highest to lowest
     // then get top 3 
     const sortedGenres = Object.entries(genreCount);
     sortedGenres.sort((a, b) => b[1] - a[1]);
     const topGenres = sortedGenres.slice(0, 3);
-
+    container.innerHTML = "";
+    
     topGenres.forEach((genre) => {
         const p = document.createElement("p");
         p.textContent = `${genre[0]} (${genre[1]} favorites)`;;
@@ -237,7 +283,7 @@ function displayRecommendations() {
 
 // searches games using your favorite genre
 // removes games already in favorites
-// keeps only 6 games
+// keeps only 10 games
 async function loadRecommendedGames(topGenre) {
     const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
     const games = await searchGamesByGenre(topGenre.toLowerCase());
@@ -253,7 +299,7 @@ async function loadRecommendedGames(topGenre) {
     // Highest rating first
     recommendedGames.sort((a, b) => b.added - a.added);
 
-    renderRecommendations(recommendedGames.slice(0, 6));
+    renderRecommendations(recommendedGames.slice(0, 10));
 }
 
 function renderRecommendations(games) {

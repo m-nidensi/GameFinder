@@ -92,6 +92,14 @@ footer {
 #favorite-games-container {
     text-align: center;
 }
+#pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+#page-number {
+    margin: 0 15px;
+    font-weight: bold;
+}
 
 
 #games-container, #favorite-games-container, #recommended-games-container  {
