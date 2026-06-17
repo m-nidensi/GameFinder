@@ -12,3 +12,11 @@ export async function searchGames(gameName) {
     const data = await response.json();
     return data.results;
 }
+
+export async function searchGamesByGenre(genre) {
+    const response = await fetch(
+        `https://api.rawg.io/api/games?key=${API_KEY}&genres=${genre}`
+    );
+    const data = await response.json();
+    return data.results;
+}

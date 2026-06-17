@@ -85,6 +85,14 @@ footer {
     margin-top: 50px;
 }
 
+#clear-favorites-btn {
+    display: block;
+    margin: 20px auto;
+}
+#favorite-games-container {
+    text-align: center;
+}
+
 
 #games-container, #favorite-games-container, #recommended-games-container  {
     /* turn container into grid layout */

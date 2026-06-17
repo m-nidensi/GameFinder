@@ -1,5 +1,5 @@
-// get search function from api
-import { searchGames } from "./api.js";
+// get search functions from api
+import { searchGames, searchGamesByGenre } from "./api.js";
 
 // gets information from the form on home page.
 const form = document.getElementById("search-form");
@@ -139,10 +139,23 @@ const savedContainer = document.getElementById("favorite-games-container");
 if (savedContainer) {
     displayFavorites();
 }
+// clear button, if its clicked remove everything from favorites
+const clearButton = document.getElementById("clear-favorites-btn");
+if (clearButton) {
+    clearButton.addEventListener("click", () => {
+        localStorage.removeItem("favorites");
+        displayFavorites();
+    });
+}
+
 // desplays all the favorit cards and adds remove button to them
 function displayFavorites() {
     const container = document.getElementById("favorite-games-container");
     const favorites =JSON.parse(localStorage.getItem("favorites")) || [];
+    if (favorites.length === 0) {
+        container.innerHTML = "<p>No favorite games yet!</p>";
+        return;
+    }
     container.innerHTML = "";
 
     favorites.forEach((game) => {
@@ -227,23 +240,25 @@ function displayRecommendations() {
 // keeps only 6 games
 async function loadRecommendedGames(topGenre) {
     const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-    const games = await searchGames(topGenre);
+    const games = await searchGamesByGenre(topGenre.toLowerCase());
 
-    const recommendedGames = games.filter(
-        (game) =>
-            !favorites.some(
-                (favorite) => favorite.id === game.id
-            )
+    const recommendedGames = games
+    .filter(game => game.rating >= 4)
+    .filter(game =>
+        !favorites.some(
+            favorite => favorite.id === game.id
+        )
     );
 
     // Highest rating first
-    recommendedGames.sort((a, b) => b.rating - a.rating);
+    recommendedGames.sort((a, b) => b.added - a.added);
 
     renderRecommendations(recommendedGames.slice(0, 6));
 }
 
 function renderRecommendations(games) {
     const container = document.getElementById("recommended-games-container");
+    container.innerHTML = "";
     games.forEach((game) => {
         const card = createGameCard(game);
         container.appendChild(card);
