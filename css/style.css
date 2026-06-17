@@ -49,8 +49,11 @@ h1 {
     text-align: center;
 }
 
-/* gives header a background */
+/* gives header a background, makes it stick to the top */
 header {
+    position: sticky;
+    top: 0;          /* Required: Tells it where to stick */
+    z-index: 1000;   /* Keeps the navbar above other content */
     background-color: var(--darkPurple);
     padding: 20px;
     margin: -20px -20px 40px -20px;
@@ -92,11 +95,12 @@ footer {
 #favorite-games-container {
     text-align: center;
 }
-#pagination {
+
+#pagination, #recommendation-pagination {
     text-align: center;
     margin-top: 20px;
 }
-#page-number {
+#page-number, #recommendation-page {
     margin: 0 15px;
     font-weight: bold;
 }
@@ -141,7 +145,7 @@ footer {
 }
 
 
-#loading-message, #error-message {
+#loading-message, #error-message, #recommendations-loading {
     font-size: 1.5rem;
     color: #00f5ff;
     font-weight: bold;

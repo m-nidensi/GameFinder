@@ -6,6 +6,10 @@ let currentPage = 1;
 let currentSearch = "";
 // same with genre
 let currentGenre = "all";
+// for recomandations 
+let recommendationPage = 1;
+const recommendationsPerPage = 6;
+let allRecommendations = [];
 // get info from buttons
 const nextButton = document.getElementById("next-btn");
 const previousButton = document.getElementById("previous-btn");
@@ -271,7 +275,7 @@ function displayRecommendations() {
     sortedGenres.sort((a, b) => b[1] - a[1]);
     const topGenres = sortedGenres.slice(0, 3);
     container.innerHTML = "";
-    
+
     topGenres.forEach((genre) => {
         const p = document.createElement("p");
         p.textContent = `${genre[0]} (${genre[1]} favorites)`;;
@@ -287,7 +291,6 @@ function displayRecommendations() {
 async function loadRecommendedGames(topGenre) {
     const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
     const games = await searchGamesByGenre(topGenre.toLowerCase());
-
     const recommendedGames = games
     .filter(game => game.rating >= 4)
     .filter(game =>
@@ -295,18 +298,51 @@ async function loadRecommendedGames(topGenre) {
             favorite => favorite.id === game.id
         )
     );
-
     // Highest rating first
     recommendedGames.sort((a, b) => b.added - a.added);
-
-    renderRecommendations(recommendedGames.slice(0, 10));
+    // i used this at the top of file*
+    allRecommendations = recommendedGames;
+    renderRecommendations();
 }
 
-function renderRecommendations(games) {
+function renderRecommendations() {
     const container = document.getElementById("recommended-games-container");
     container.innerHTML = "";
-    games.forEach((game) => {
+    // calculating what 6 games will be shown on that page!
+    const start = (recommendationPage - 1) * recommendationsPerPage;
+    const end = start + recommendationsPerPage;
+    const gamesToShow = allRecommendations.slice(start, end);
+
+    gamesToShow.forEach((game) => {
         const card = createGameCard(game);
         container.appendChild(card);
+    });
+}
+
+
+// recomendation buttons
+
+const recommendationNext = document.getElementById("recommendation-next");
+if (recommendationNext) {
+    recommendationNext.addEventListener("click", () => {
+        const maxPage = Math.ceil(allRecommendations.length /recommendationsPerPage);
+        if (recommendationPage < maxPage) {
+            recommendationPage++;
+            renderRecommendations();
+            window.scrollTo(0, 0);
+            document.getElementById("recommendation-page").textContent =`Page ${recommendationPage}`;
+        }
+    });
+}
+
+const recommendationPrev = document.getElementById("recommendation-prev");
+if (recommendationPrev) {
+    recommendationPrev.addEventListener("click", () => {
+        if (recommendationPage > 1) {
+            recommendationPage--;
+            renderRecommendations();
+            window.scrollTo(0, 0);
+            document.getElementById("recommendation-page").textContent =`Page ${recommendationPage}`;
+        }
     });
 }
