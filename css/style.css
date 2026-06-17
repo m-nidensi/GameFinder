@@ -86,7 +86,7 @@ footer {
 }
 
 
-#games-container, #favorite-games-container {
+#games-container, #favorite-games-container, #recommended-games-container  {
     /* turn container into grid layout */
     display: grid;
     /* minmax: Cards should never be smaller than 320px and bigger then 400px */

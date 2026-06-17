@@ -22,8 +22,7 @@ if (form) {
         // while searching for games website will show "Loading games..."
         const loadingMessage = document.getElementById("loading-message");
         loadingMessage.textContent = "Loading games...";
-        // this line is added so loading message will be visible for longer
-        await new Promise(resolve => setTimeout(resolve, 300));
+        
 
         try{
 
@@ -107,6 +106,8 @@ function renderGames(games) {
     });
 }
 
+// favotits Page
+
 // saves favorite games
 function saveFavorite(game) {
     // get existing favorites from localStorage
@@ -171,4 +172,80 @@ function removeFavorite(gameId) {
         JSON.stringify(favorites)
     );
     displayFavorites();
+}
+
+
+// recomandations Page:
+
+const recommendationsContainer = document.getElementById("recommendations-container");
+
+if (recommendationsContainer) {
+    displayRecommendations();
+}
+
+function displayRecommendations() {
+    const container = document.getElementById("recommendations-container");
+    const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+
+    // if there are no favorites go look for them
+    if (favorites.length === 0) {
+        container.textContent = "Look threw some games first! Choose favorites! :D";
+        return;
+    }
+
+    // for each game, for each genre count them.
+    const genreCount = {};
+    favorites.forEach((game) => {
+        game.genres.forEach((genre) => {
+            if (genreCount[genre.name]) {
+                genreCount[genre.name]++;
+            } else {
+                genreCount[genre.name] = 1;
+            }
+        });
+    });
+
+    container.innerHTML = "<h2>Your favorite genres:</h2>";
+
+    // converts object into array, then we sort it from highest to lowest
+    // then get top 3 
+    const sortedGenres = Object.entries(genreCount);
+    sortedGenres.sort((a, b) => b[1] - a[1]);
+    const topGenres = sortedGenres.slice(0, 3);
+
+    topGenres.forEach((genre) => {
+        const p = document.createElement("p");
+        p.textContent = `${genre[0]} (${genre[1]} favorites)`;;
+        container.appendChild(p);
+    });
+
+    loadRecommendedGames(topGenres[0][0]);
+}
+
+// searches games using your favorite genre
+// removes games already in favorites
+// keeps only 6 games
+async function loadRecommendedGames(topGenre) {
+    const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    const games = await searchGames(topGenre);
+
+    const recommendedGames = games.filter(
+        (game) =>
+            !favorites.some(
+                (favorite) => favorite.id === game.id
+            )
+    );
+
+    // Highest rating first
+    recommendedGames.sort((a, b) => b.rating - a.rating);
+
+    renderRecommendations(recommendedGames.slice(0, 6));
+}
+
+function renderRecommendations(games) {
+    const container = document.getElementById("recommended-games-container");
+    games.forEach((game) => {
+        const card = createGameCard(game);
+        container.appendChild(card);
+    });
 }
