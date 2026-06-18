@@ -43,13 +43,15 @@ if (form) {
             currentSearch = searchInput.value;
             currentPage = 1;
             currentGenre = genreFilter.value;
+            
             const games = await searchGames(
                 searchInput.value,
                 currentPage
             );
-            // stores selected genre from dropdown
-            const selectedGenre = genreFilter.value;
-            const filteredGames = filterByGenre(games, currentGenre);
+
+            // aply all needed filters (garas and +4 rating)
+            const filteredGames = applyFilters(games);
+        
             // if there are no games found show this message and clear the past search
             if (filteredGames.length === 0) {
                 document.getElementById("games-container").innerHTML = "";
@@ -74,7 +76,7 @@ if (nextButton) {
         if (!currentSearch) return;
         currentPage++;
         const games = await searchGames(currentSearch, currentPage);
-        const filteredGames = filterByGenre(games, currentGenre);
+        const filteredGames = applyFilters(games);
         renderGames(filteredGames);
         pageNumber.textContent =`Page ${currentPage}`;
     });
@@ -85,7 +87,7 @@ if (previousButton) {
         if (currentPage === 1) return;
         currentPage--;
         const games = await searchGames(currentSearch, currentPage);
-        const filteredGames = filterByGenre(games, currentGenre);
+        const filteredGames = applyFilters(games);
         renderGames(filteredGames);
         pageNumber.textContent =`Page ${currentPage}`;
     });
@@ -122,7 +124,7 @@ function createGameCard(game) {
     return card;
 }
 
-// filrers games by genre
+// filters games by genre
 function filterByGenre(games, genre) {
     if (genre === "all") {
         return games;
@@ -135,6 +137,18 @@ function filterByGenre(games, genre) {
     );
 }
 
+// aplys all ganra and 4+ filter
+function applyFilters(games) {
+    let filteredGames = filterByGenre(games, currentGenre);
+    const highRatedOnly = document.getElementById("high-rated-only").checked;
+    if (highRatedOnly) {
+        filteredGames = filteredGames.filter(
+            game => game.rating >= 4
+        );
+    }
+    return filteredGames;
+}
+
 // functon to desplay the games cards
 function renderGames(games) {
     const container = document.getElementById("games-container");
@@ -144,7 +158,6 @@ function renderGames(games) {
     games.forEach((game) => {
         // Favorits button
         const card = createGameCard(game);
-
         const favoriteButton = document.createElement("button");
         favoriteButton.textContent = "Add to favorites";
         favoriteButton.addEventListener("click", () => {
@@ -173,7 +186,6 @@ function saveFavorite(game) {
         alert(`${game.name} is already in favorites!`);
         return;
     }
-
     // add in the game
     favorites.push(game);
     // adds favorites to local storage with jsons help
@@ -183,13 +195,12 @@ function saveFavorite(game) {
     );
     alert(`${game.name} added to favorites!`);
 }
-
-
 // check if we are on the favorites page
 const savedContainer = document.getElementById("favorite-games-container");
 if (savedContainer) {
     displayFavorites();
 }
+
 // clear button, if its clicked remove everything from favorites
 const clearButton = document.getElementById("clear-favorites-btn");
 if (clearButton) {
@@ -305,6 +316,7 @@ async function loadRecommendedGames(topGenre) {
     renderRecommendations();
 }
 
+// makes recomandation cards but also adds button "favorites" in them
 function renderRecommendations() {
     const container = document.getElementById("recommended-games-container");
     container.innerHTML = "";
@@ -312,9 +324,26 @@ function renderRecommendations() {
     const start = (recommendationPage - 1) * recommendationsPerPage;
     const end = start + recommendationsPerPage;
     const gamesToShow = allRecommendations.slice(start, end);
-
+    
+    if (gamesToShow.length === 0) {
+        container.innerHTML = "<p>No more recommendations for you :D</p>";
+        return;
+    }
     gamesToShow.forEach((game) => {
         const card = createGameCard(game);
+        const favoriteButton = document.createElement("button");
+        favoriteButton.textContent = "Add to Favorites";
+
+        favoriteButton.addEventListener("click", () => {
+            saveFavorite(game);
+            // remove recommendations that are now favorites
+            allRecommendations = allRecommendations.filter(
+                recommendation => recommendation.id !== game.id
+            );
+            renderRecommendations();
+            displayRecommendations();
+        });
+        card.appendChild(favoriteButton);
         container.appendChild(card);
     });
 }

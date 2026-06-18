@@ -106,7 +106,9 @@ footer {
 }
 
 
-#games-container, #favorite-games-container, #recommended-games-container  {
+#games-container,
+#favorite-games-container,
+#recommended-games-container  {
     /* turn container into grid layout */
     display: grid;
     /* minmax: Cards should never be smaller than 320px and bigger then 400px */
@@ -173,7 +175,9 @@ footer {
     main {
         max-width: 1400px;
     }
-    #games-container {
-        grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));
+    #games-container,
+    #favorite-games-container,
+    #recommended-games-container {
+        grid-template-columns: repeat(3, 1fr);
     }
 }
