@@ -43,6 +43,22 @@ nav a:hover {
     color: #00f5ff;
 }
 
+/* button designs */
+button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: 0.3s;
+}
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px var(--accent-color);
+}
+
 
 /* all headers should be in center*/
 h1 {

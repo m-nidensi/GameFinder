@@ -1,27 +1,30 @@
 // get search functions from api
 import { searchGames, searchGamesByGenre } from "./api.js";
-// let curent page be 1 for starter.
-let currentPage = 1;
+
 // We'll need this because when the user presses Next, we need to know what they searched for.
+let currentPage = 1;
 let currentSearch = "";
-// same with genre
 let currentGenre = "all";
-// for recomandations 
 let recommendationPage = 1;
 const recommendationsPerPage = 6;
 let allRecommendations = [];
-// get info from buttons
+
+// get info from buttons on home page
 const nextButton = document.getElementById("next-btn");
 const previousButton = document.getElementById("previous-btn");
 const pageNumber = document.getElementById("page-number");
 
+
+
+// HOME PAGE !!!!!!!!!!!!!!!!!!!!
+
+
 // gets information from the form on home page.
 const form = document.getElementById("search-form");
 
-
 // addEventListener listens to action happaning in from, in this situation a submit button.
 // preventDefault Stops a <form> from reloading the page when clicking a submit button, allowing asynchronous JavaScript
-// then we search by name and filter searched game by ganre.
+// then we search by name and filter searched game by ganre and rating.
 // renderGame (add the game to page)
 if (form) {
     form.addEventListener("submit", async (event) => {
@@ -37,13 +40,12 @@ if (form) {
         // while searching for games website will show "Loading games..."
         const loadingMessage = document.getElementById("loading-message");
         loadingMessage.textContent = "Loading games...";
-        
 
         try{
             currentSearch = searchInput.value;
             currentPage = 1;
             currentGenre = genreFilter.value;
-            
+
             const games = await searchGames(
                 searchInput.value,
                 currentPage
@@ -59,7 +61,6 @@ if (form) {
                 loadingMessage.textContent = "";
                 return;
             }
-
             renderGames(filteredGames);
             loadingMessage.textContent = "";
             errorMessage.textContent = "";
@@ -69,7 +70,7 @@ if (form) {
         }
     });
 }
-
+// BUTTONS ON HOME PAGEE
 // if next/prev button is pressed
 if (nextButton) {
     nextButton.addEventListener("click", async () => {
@@ -92,8 +93,6 @@ if (previousButton) {
         pageNumber.textContent =`Page ${currentPage}`;
     });
 }
-
-
 
 
 // creates a gamecard
@@ -170,13 +169,12 @@ function renderGames(games) {
     });
 }
 
-// favotits Page
+// FAVORITES PAGE!!!!!!!!!!!!!!!!!!
 
 // saves favorite games
 function saveFavorite(game) {
     // get existing favorites from localStorage
     let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
-
     // check if game already exists in favorites
     //  (some = Checks whether at least one item matches the condition.)
     const alreadySaved = favorites.some(
@@ -195,6 +193,7 @@ function saveFavorite(game) {
     );
     alert(`${game.name} added to favorites!`);
 }
+
 // check if we are on the favorites page
 const savedContainer = document.getElementById("favorite-games-container");
 if (savedContainer) {
@@ -250,14 +249,14 @@ function removeFavorite(gameId) {
 }
 
 
-// recomandations Page:
+// RECOMANDATION PAGE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 const recommendationsContainer = document.getElementById("recommendations-container");
-
 if (recommendationsContainer) {
     displayRecommendations();
 }
 
+// desplays recomandations as in favorites calculated
 function displayRecommendations() {
     const container = document.getElementById("recommendations-container");
     const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
@@ -298,7 +297,6 @@ function displayRecommendations() {
 
 // searches games using your favorite genre
 // removes games already in favorites
-// keeps only 10 games
 async function loadRecommendedGames(topGenre) {
     const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
     const games = await searchGamesByGenre(topGenre.toLowerCase());
